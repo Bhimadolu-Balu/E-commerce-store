@@ -5,7 +5,7 @@ const CartItem = ({ item }) => {
 	const { removeFromCart, updateQuantity } = useCartStore();
 
 	return (
-		<div className='rounded-lg border p-4 shadow-sm border-gray-700 bg-black md:p-6'>
+		<div className='rounded-lg border p-4 shadow-sm border-gray-700 bg-[#3D3D3D] md:p-6'>
 			<div className='space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0'>
 				<div className='shrink-0 md:order-1'>
 					<img className='h-20 md:h-32 rounded object-cover' src={item.image} />

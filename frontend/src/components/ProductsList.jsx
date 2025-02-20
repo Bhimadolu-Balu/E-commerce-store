@@ -9,7 +9,7 @@ const ProductsList = () => {
 
 	return (
 		<motion.div
-			className='bg-gray-800 shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto'
+			className='bg-[#3D3D3D] shadow-lg rounded-lg overflow-hidden max-w-4xl mx-auto'
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.8 }}
@@ -51,7 +51,7 @@ const ProductsList = () => {
 					</tr>
 				</thead>
 
-				<tbody className='bg-[#181818] divide-y divide-gray-700'>
+				<tbody className='bg-black divide-y divide-gray-700'>
 					{products?.map((product) => (
 						<tr key={product._id} className='hover:bg-gray-700'>
 							<td className='px-6 py-4 whitespace-nowrap'>

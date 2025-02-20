@@ -1,4 +1,4 @@
-import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react";
+import { ShoppingCart, UserPlus, LogIn, LogOut, Lock, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
@@ -19,23 +19,23 @@ const Navbar = () => {
 					<nav className='flex flex-wrap items-center gap-4'>
 						<Link
 							to={"/"}
-							className='text-rgba(221,168,83,0.9)] hover:white text-2xl font-bold transition duration-300
-					 ease-in-out'
+							className='text-white hover:text-[rgba(221,168,83,0.9)] text-1xl font-bold flex items-center space-x-2 transition duration-300 ease-in-out'
 						>
-							Home
+							<Home size={24} />
+							<span>Home</span>
 						</Link>
 						{user && (
 							<Link
 								to={"/cart"}
-								className='relative group text-white font-bold hover:text-white transition duration-300 
-							ease-in-out'
+								className='relative group text-white font-bold hover:text-[rgba(221,168,83,0.9)] transition duration-300 
+								ease-in-out'
 							>
 								<ShoppingCart className='inline-block mr-1 group-hover:text-[rgba(221,168,83,0.9)]' size={30} />
 								<span className='hidden font-bold sm:inline'>Cart</span>
 								{cart.length > 0 && (
 									<span
 										className='absolute -top-2 -left-2 bg-[rgba(221,168,83,0.9)] text-white rounded-full px-2 py-0.5 
-									text-xs transition duration-300 ease-in-out'
+										text-xs transition duration-300 ease-in-out'
 									>
 										{cart.length}
 									</span>
@@ -56,7 +56,7 @@ const Navbar = () => {
 						{user ? (
 							<button
 								className='bg-[rgba(221,168,83,0.9)] hover:bg-[rgba(221,168,83,0.8)] text-white py-2 px-4 
-						rounded-md flex items-center transition duration-300 ease-in-out'
+								rounded-md flex items-center transition duration-300 ease-in-out'
 								onClick={logout}
 							>
 								<LogOut size={18} />

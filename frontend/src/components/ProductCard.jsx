@@ -17,10 +17,10 @@ const ProductCard = ({ product }) => {
 	};
 
 	return (
-		<div className='flex w-full relative flex-col overflow-hidden rounded-lg border border-gray-700 bg-[#000000] shadow-lg'>
+		<div className='flex w-full relative flex-col overflow-hidden rounded-lg border border-gray-700 bg-[#3D3D3D] shadow-lg'>
 			<div className='relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl'>
 				<img className='object-cover w-full' src={product.image} alt='product image' />
-				<div className='absolute inset-0 bg-black bg-opacity-20' />
+				<div className='absolute inset-0 bg-[#3D3D3D] bg-opacity-20' />
 			</div>
 
 			<div className='mt-4 px-5 pb-5'>
