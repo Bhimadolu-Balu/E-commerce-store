@@ -2,18 +2,26 @@ import Coupon from "../models/coupon.model.js";
 import Order from "../models/order.model.js";
 import { stripe } from "../lib/stripe.js";
 
+const stripe = stripePackage(process.env.STRIPE_SECRET_KEY); // Initialize Stripe
+
 export const createCheckoutSession = async (req, res) => {
 	try {
 		const { products, couponCode } = req.body;
 
+		// Validate products array
 		if (!Array.isArray(products) || products.length === 0) {
 			return res.status(400).json({ error: "Invalid or empty products array" });
 		}
 
 		let totalAmount = 0;
 
+		// Map products to Stripe format
 		const lineItems = products.map((product) => {
-			const amount = Math.round(product.price * 100); // stripe wants u to send in the format of cents
+			if (!product.price || !product.quantity || product.quantity <= 0) {
+				throw new Error(`Invalid product data for: ${product.name}`);
+			}
+
+			const amount = Math.round(product.price * 100); // Convert to cents
 			totalAmount += amount * product.quantity;
 
 			return {
@@ -21,22 +29,26 @@ export const createCheckoutSession = async (req, res) => {
 					currency: "usd",
 					product_data: {
 						name: product.name,
-						images: [product.image],
+						images: product.image ? [product.image] : [],
 					},
 					unit_amount: amount,
 				},
-				quantity: product.quantity || 1,
+				quantity: product.quantity,
 			};
 		});
 
+		// Handle coupon logic
 		let coupon = null;
 		if (couponCode) {
 			coupon = await Coupon.findOne({ code: couponCode, userId: req.user._id, isActive: true });
+
 			if (coupon) {
-				totalAmount -= Math.round((totalAmount * coupon.discountPercentage) / 100);
+				const discountAmount = Math.round((totalAmount * coupon.discountPercentage) / 100);
+				totalAmount = Math.max(totalAmount - discountAmount, 0); // Ensure total doesn't go negative
 			}
 		}
 
+		// Create Stripe checkout session
 		const session = await stripe.checkout.sessions.create({
 			payment_method_types: ["card"],
 			line_items: lineItems,
@@ -63,15 +75,18 @@ export const createCheckoutSession = async (req, res) => {
 			},
 		});
 
+		// Reward user with a new coupon for large orders
 		if (totalAmount >= 20000) {
 			await createNewCoupon(req.user._id);
 		}
+
 		res.status(200).json({ id: session.id, totalAmount: totalAmount / 100 });
 	} catch (error) {
-		console.error("Error processing checkout:", error);
+		console.error("❌ Error processing checkout:", error.message);
 		res.status(500).json({ message: "Error processing checkout", error: error.message });
 	}
 };
+
 
 export const checkoutSuccess = async (req, res) => {
 	try {

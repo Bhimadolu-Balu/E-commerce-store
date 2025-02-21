@@ -64,27 +64,39 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
+
+		if (!email || !password) {
+			return res.status(400).json({ message: "Email and password are required" });
+		}
+
 		const user = await User.findOne({ email });
 
-		if (user && (await user.comparePassword(password))) {
-			const { accessToken, refreshToken } = generateTokens(user._id);
-			await storeRefreshToken(user._id, refreshToken);
-			setCookies(res, accessToken, refreshToken);
-
-			res.json({
-				_id: user._id,
-				name: user.name,
-				email: user.email,
-				role: user.role,
-			});
-		} else {
-			res.status(400).json({ message: "Invalid email or password" });
+		if (!user || !(await user.comparePassword(password))) {
+			return res.status(400).json({ message: "Invalid email or password" });
 		}
+
+		// Generate access and refresh tokens
+		const { accessToken, refreshToken } = generateTokens(user._id);
+
+		// Store refresh token securely
+		await storeRefreshToken(user._id, refreshToken);
+
+		// Set HTTP cookies
+		setCookies(res, accessToken, refreshToken);
+
+		// Send response
+		return res.status(200).json({
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			role: user.role,
+		});
 	} catch (error) {
-		console.log("Error in login controller", error.message);
-		res.status(500).json({ message: error.message });
+		console.error(" Error in login controller:", error.message);
+		return res.status(500).json({ message: "Internal server error" });
 	}
 };
+
 
 export const logout = async (req, res) => {
 	try {
