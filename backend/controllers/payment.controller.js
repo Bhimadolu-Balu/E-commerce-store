@@ -2,8 +2,6 @@ import Coupon from "../models/coupon.model.js";
 import Order from "../models/order.model.js";
 import { stripe } from "../lib/stripe.js";
 
-const stripe = stripePackage(process.env.STRIPE_SECRET_KEY); // Initialize Stripe
-
 export const createCheckoutSession = async (req, res) => {
 	try {
 		const { products, couponCode } = req.body;
